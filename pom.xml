@@ -64,7 +64,7 @@
         <aws.sdk.version>2.34.0</aws.sdk.version>
 
         <!-- Internal Libraries -->
-        <wbr-spring-boot-starter.version>0.0.1</wbr-spring-boot-starter.version>
+        <wbr-spring-boot-starter.version>1.0.0</wbr-spring-boot-starter.version>
 
         <!-- Build Plugins and Libraries (not managed by Spring Boot) -->
         <spotless.version>3.7.0</spotless.version>
@@ -74,58 +74,6 @@
         <palantir.java.format.version>2.94.0</palantir.java.format.version>
 
     </properties>
-
-    <!-- ========================================================= -->
-    <!-- Internal Repositories                                     -->
-    <!-- ========================================================= -->
-
-    <repositories>
-
-        <repository>
-            <id>wbr-maven-release</id>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
-        </repository>
-
-        <repository>
-            <id>wbr-maven-snapshot</id>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
-        </repository>
-
-    </repositories>
-
-    <pluginRepositories>
-
-        <pluginRepository>
-            <id>wbr-maven-release</id>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
-        </pluginRepository>
-
-        <pluginRepository>
-            <id>wbr-maven-snapshot</id>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
-        </pluginRepository>
-
-    </pluginRepositories>
-
-    <!-- ========================================================= -->
-    <!-- Publishing Configuration                                  -->
-    <!-- ========================================================= -->
-
-    <distributionManagement>
-
-        <repository>
-            <id>wbr-maven-release</id>
-            <name>WBR Maven Release Repository</name>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
-        </repository>
-
-        <snapshotRepository>
-            <id>wbr-maven-snapshot</id>
-            <name>WBR Maven Snapshot Repository</name>
-            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
-        </snapshotRepository>
-
-    </distributionManagement>
 
     <!-- ========================================================= -->
     <!-- Dependency Management                                     -->
