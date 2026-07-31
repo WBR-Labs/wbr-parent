@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- ========================================================= -->
+    <!-- WBR Parent POM — Spring Boot Microservices               -->
+    <!--                                                           -->
+    <!-- Opinionated parent for Spring Boot microservices.        -->
+    <!-- Every child module is expected to be a Spring Boot app.  -->
+    <!--                                                           -->
+    <!-- Provides:                                                 -->
+    <!-- - Spring Boot plugin wired on every child                -->
+    <!-- - Dependency version management (Spring Boot + AWS SDK)  -->
+    <!-- - Build standards                                         -->
+    <!-- - Testing standards                                       -->
+    <!-- - Code quality gates                                      -->
+    <!-- - Publishing standards                                    -->
+    <!-- ========================================================= -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        spring-boot-starter-parent provides:
+          Dependency versions  : Full spring-boot-dependencies BOM (Spring Framework,
+                                 Spring Data, Spring Security, Micrometer, Testcontainers,
+                                 Jackson, Hibernate, Flyway, Kafka, RabbitMQ, and more)
+          Plugin versions      : maven-compiler-plugin, maven-surefire-plugin,
+                                 maven-failsafe-plugin, maven-enforcer-plugin,
+                                 maven-source-plugin, maven-javadoc-plugin,
+                                 maven-checkstyle-plugin, spring-boot-maven-plugin
+          Build defaults       : UTF-8 source/resource encoding
+          Resource filtering   : application.properties and application.yml
+                                 support @variable@ placeholder substitution
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath />
+    </parent>
+
+    <groupId>com.wbr</groupId>
+    <artifactId>wbr-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>WBR Parent POM</name>
+
+    <!-- ========================================================= -->
+    <!-- Global Properties                                         -->
+    <!-- ========================================================= -->
+
+    <properties>
+
+        <!-- Java Platform -->
+        <java.version>25</java.version>
+
+        <!-- SpotBugs 4.9.3 does not support Java 25 (class file version 69) — skip until a compatible release -->
+        <spotbugs.skip>true</spotbugs.skip>
+
+        <!-- Frameworks -->
+        <aws.sdk.version>2.34.0</aws.sdk.version>
+
+        <!-- Internal Libraries -->
+        <wbr-spring-boot-starter.version>0.0.1-SNAPSHOT</wbr-spring-boot-starter.version>
+
+        <!-- Build Plugins and Libraries (not managed by Spring Boot) -->
+        <spotless.version>3.7.0</spotless.version>
+        <jacoco.version>0.8.13</jacoco.version>
+        <spotbugs.version>4.9.3.0</spotbugs.version>
+        <checkstyle.version>3.6.0</checkstyle.version>
+        <palantir.java.format.version>2.94.0</palantir.java.format.version>
+
+    </properties>
+
+    <!-- ========================================================= -->
+    <!-- Internal Repositories                                     -->
+    <!-- ========================================================= -->
+
+    <repositories>
+
+        <repository>
+            <id>wbr-maven-release</id>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
+        </repository>
+
+        <repository>
+            <id>wbr-maven-snapshot</id>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
+        </repository>
+
+    </repositories>
+
+    <pluginRepositories>
+
+        <pluginRepository>
+            <id>wbr-maven-release</id>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
+        </pluginRepository>
+
+        <pluginRepository>
+            <id>wbr-maven-snapshot</id>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
+        </pluginRepository>
+
+    </pluginRepositories>
+
+    <!-- ========================================================= -->
+    <!-- Publishing Configuration                                  -->
+    <!-- ========================================================= -->
+
+    <distributionManagement>
+
+        <repository>
+            <id>wbr-maven-release</id>
+            <name>WBR Maven Release Repository</name>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-release</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>wbr-maven-snapshot</id>
+            <name>WBR Maven Snapshot Repository</name>
+            <url>https://api.repoflow.io/maven/admin-4267/wbr-maven-snapshot</url>
+        </snapshotRepository>
+
+    </distributionManagement>
+
+    <!-- ========================================================= -->
+    <!-- Dependency Management                                     -->
+    <!-- ========================================================= -->
+
+    <dependencyManagement>
+
+        <dependencies>
+
+            <!-- AWS SDK -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${aws.sdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- WBR Platform Starter -->
+            <dependency>
+                <groupId>com.wbr</groupId>
+                <artifactId>wbr-spring-boot-starter</artifactId>
+                <version>${wbr-spring-boot-starter.version}</version>
+            </dependency>
+
+        </dependencies>
+
+    </dependencyManagement>
+
+    <!-- ========================================================= -->
+    <!-- Mandatory Dependencies                                    -->
+    <!-- Automatically inherited by all child projects             -->
+    <!-- ========================================================= -->
+
+    <dependencies>
+
+        <!-- WBR Platform Starter — logging, auth, observability,  -->
+        <!-- error handling, HTTP client, health, graceful shutdown -->
+        <dependency>
+            <groupId>com.wbr</groupId>
+            <artifactId>wbr-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- Lombok — annotation-based boilerplate reduction.      -->
+        <!-- Generates getters/setters/constructors/builders at    -->
+        <!-- compile time; stripped from the final JAR.            -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Test slice — JUnit 5, AssertJ, Mockito, Spring test   -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ========================================================= -->
+    <!-- Mandatory Build Plugins                                   -->
+    <!-- Automatically inherited by all child projects             -->
+    <!-- ========================================================= -->
+
+    <build>
+
+        <plugins>
+
+            <!-- Java Compilation -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Unit Tests -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+
+            <!-- Integration Tests -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Code Coverage -->
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>coverage-report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Formatting -->
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>${spotless.version}</version>
+                <configuration>
+                    <java>
+                        <palantirJavaFormat>
+                            <version>${palantir.java.format.version}</version>
+                            <style>PALANTIR</style>
+                            <formatJavadoc>true</formatJavadoc>
+                        </palantirJavaFormat>
+                        <removeUnusedImports />
+                        <trimTrailingWhitespace />
+                        <endWithNewline />
+                    </java>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Checkstyle -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle-validation</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- SpotBugs -->
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Enforcer -->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-build-rules</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[25,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.9,)</version>
+                                </requireMavenVersion>
+                                <requireUpperBoundDeps />
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Spring Boot -->
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
