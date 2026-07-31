@@ -64,7 +64,7 @@
         <aws.sdk.version>2.34.0</aws.sdk.version>
 
         <!-- Internal Libraries -->
-        <wbr-spring-boot-starter.version>0.0.1-SNAPSHOT</wbr-spring-boot-starter.version>
+        <wbr-spring-boot-starter.version>0.0.1</wbr-spring-boot-starter.version>
 
         <!-- Build Plugins and Libraries (not managed by Spring Boot) -->
         <spotless.version>3.7.0</spotless.version>
